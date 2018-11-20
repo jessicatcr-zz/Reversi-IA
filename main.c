@@ -116,7 +116,7 @@ int main() {
     //     scanf("%d", &posH);
     //     printf("E verticalmente: 0 1 2 3 4 5 6 7\n");
     //     scanf("%d", &posV);
-    //     if (posH ==inicializaTabPeso (tabuleiroPeso);inicializaTabPeso (tabuleiroPeso); 1) gameOver = true;
+    //     if (posH == 1) gameOver = true;
     //     printf("%dH - %dV\n", posH, posV);
     // }
 
