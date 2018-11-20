@@ -69,23 +69,42 @@ void imprimeTab(char tabuleiro[8][8]) {
 }
 
 bool jogadaValida (char tabuleiro[8][8], int posH, int posV, char jogador) {
-    // Verifica se tem 
+    // Verifica se não é uma posição isolada no tabuleiro
     if (tabuleiro[posV-1][posH] == '_' && tabuleiro[posV+1][posH] == '_' &&
-        tabuleiro[posH-1][posH] == '_' && tabuleiro[posH+1][posH] == '_') {
+        tabuleiro[posV][posH-1] == '_' && tabuleiro[posV][posH+1] == '_') {
         return false;
-    } else{
+    } else if (posH > 7 || posV > 7) { //Não ultrapassa os limites
+        return false;
+    } else {
         if (jogador == 'P') {
-            if (tabuleiro[posV-1][posH] == 'B' && tabuleiro[posV+1][posH] == '_' &&
-                tabuleiro[posH-1][posH] == '_' && tabuleiro[posH+1][posH] == '_') {
+            // Também tem que considerar um da mesma cor a pelo menos 1 de distância
+            if (tabuleiro[posV-1][posH] == 'B' || tabuleiro[posV+1][posH] == 'B' ||
+                tabuleiro[posV][posH-1] == 'B' || tabuleiro[posV][posH+1] == 'B' ||
+                tabuleiro[posV-1][posH-1] == 'B' || tabuleiro[posV+1][posH+1] == 'B' ||
+                tabuleiro[posV-1][posH+1] == 'B' || tabuleiro[posV+1][posH-1] == 'B') {
+                return true;
+            } else {
                 return false;
+            }
         } else if (jogador == 'B') {
-
+            if (tabuleiro[posV-1][posH] == 'P' || tabuleiro[posV+1][posH] == 'P' ||
+                tabuleiro[posV][posH-1] == 'P' || tabuleiro[posV][posH+1] == 'P' ||
+                tabuleiro[posV-1][posH-1] == 'P' || tabuleiro[posV+1][posH+1] == 'P' ||
+                tabuleiro[posV-1][posH+1] == 'P' || tabuleiro[posV+1][posH-1] == 'P') {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }
 
 void atualizaTab (char tabuleiro[8][8], int posH, int posV, char jogador) {
-
+    if (jogadaValida (tabuleiro, posH, posV, jogador)) {
+        //
+    } else {
+        printf("Esta não é uma jogada valida\n");
+    }
 }
 
 void vitoria(bool gameOver, int ptsP, int ptsB) {
@@ -116,7 +135,7 @@ int main() {
     //     scanf("%d", &posH);
     //     printf("E verticalmente: 0 1 2 3 4 5 6 7\n");
     //     scanf("%d", &posV);
-    //     if (posH ==inicializaTabPeso (tabuleiroPeso);inicializaTabPeso (tabuleiroPeso); 1) gameOver = true;
+    //     if (posH == 1) gameOver = true;
     //     printf("%dH - %dV\n", posH, posV);
     // }
 
