@@ -15,3 +15,5 @@ Mesmo com a Poda-Alfa-Beta, você não irá conseguir percorrer todo o espaço d
 funções de avaliação que determinem o valor de um determinado estado.
 <br>Várias características podem ser utilizadas em sua função de avaliação. Procure limitar o tempo máximo de uma jogada
 para o seu jogo não demorar demais.
+<br>
+A função de avaliação usada é a quantidade de peças pretas no tabuleiro.
