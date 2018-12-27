@@ -15,27 +15,61 @@
 #include "tabuleiro.h"
 #include "jogada.h"
 
-
+// Preto: jogador; branco: computador.
 int main() {
-    char tabuleiro[8][8];
-    int tabuleiroPeso[8][8];
-    int posH, posV, ptsB = 2, ptsP = 2;
-    bool gameOver = false;
+    jogo jg;
+    // int tabuleiroPeso[8][8];
+    char y;
+    int x, nJogadasValidas, i;
+    jogada jogadas[28];
+    bool gameOver = false, vezJogador = true, passouVez = false, verEntrada;
 
-    inicializaTab(tabuleiro);
-    inicializaTabPeso (tabuleiroPeso); // Para melhoria de estratégia
-    imprimeTab(tabuleiro);
+    inicializaTab(&jg);
+    // inicializaTabPeso (tabuleiroPeso); // Para melhoria de estratégia
 
-    // while(!gameOver) {
-        printf("Qual a posição da sua próxima jogada?\n");
-        printf("Horizontalmente: 0 1 2 3 4 5 6 7\n");
-        scanf("%d", &posH);
-        printf("E verticalmente: 0 1 2 3 4 5 6 7\n");
-        scanf("%d", &posV);
-    //     if (posH == 1) gameOver = true; //Para testar
-        // printf("%dH - %dV\n", posH, posV);
-    // }
+    while(!gameOver) {
+        imprimeTab(&jg);        
+        if (vezJogador) {
+            nJogadasValidas = jogadasValidas(&jg, 'P', jogadas);
+            if (nJogadasValidas > 0) {
+                verEntrada = true;
+                do {
+                    printf("\nQual a posição da sua próxima jogada?\n"); //preto começa
+                    printf("Número: 1 2 3 4 5 6 7 8\n");
+                    scanf(" %d", &x);
+                    printf("Letra: a b c d e f g h\n");
+                    scanf(" %c", &y);
+                    if ((x >= 1 && x <= 8) && (y >= 'a' && y <= 'h')) {
+                        y -= 'a';
+                        x -= 1;
+                        for (i = 0; i < nJogadasValidas; i++) {
+                            if (x == jogadas[i].x && y == jogadas[i].y) {
+                                verEntrada = false;
+                            }
+                        }
+                        if (verEntrada) printf("Jogada Inválida!\n");
+                    }
+                } while(verEntrada);
 
-    vitoria(gameOver, ptsP, ptsB);
+                printf("[DEBUG] JOGADOR: (%d,%c)", x, y+'a');
+                atualizaTab(&jg, x, y, 'P');
+            } else {
+                passouVez = true;
+            }
+            vezJogador = false;    
+        } else {
+            nJogadasValidas = jogadasValidas(&jg, 'B', jogadas);
+            if (nJogadasValidas > 0) {
+                passouVez = false;
+
+                printf("[DEBUG] COMPUTADOR: (%d,%c)", jogadas[0].x, jogadas[0].y+'a');
+                atualizaTab(&jg, jogadas[0].x, jogadas[0].y, 'B');
+            }
+            vezJogador = true;
+        }
+        if (passouVez && vezJogador) gameOver = true;
+    }
+
+    vitoria(jg.ptsP, jg.ptsB);
     return 0;
 }

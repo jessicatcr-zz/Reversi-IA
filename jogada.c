@@ -11,40 +11,146 @@
 #include <stdbool.h>
 #include "jogada.h"
 
-bool jogadaValida (char tabuleiro[8][8], int posH, int posV, char jogador) {
+bool jogadaValida (jogo *jg, int x, int y, char jogador) {
     // Não ultrapassar os limites
-    if (posH > 7 || posV > 7 || posH < 0 || posV < 0) {
-        return false;
-    // Se todos ao redor são da mesma cor
-    } else if (tabuleiro[posV-1][posH] == jogador && tabuleiro[posV+1][posH] == jogador &&
-               tabuleiro[posV][posH-1] == jogador && tabuleiro[posV][posH+1] == jogador &&
-               tabuleiro[posV-1][posH-1] == jogador && tabuleiro[posV+1][posH+1] == jogador &&
-               tabuleiro[posV-1][posH+1] == jogador && tabuleiro[posV+1][posH-1] == jogador) {
-        return false;
-    // Se todos ao redor são vazios (caso geral)
-    } else if (tabuleiro[posV-1][posH] == '_' && tabuleiro[posV+1][posH] == '_' &&
-               tabuleiro[posV][posH-1] == '_' && tabuleiro[posV][posH+1] == '_' &&
-               tabuleiro[posV-1][posH-1] == '_' && tabuleiro[posV+1][posH+1] == '_' &&
-               tabuleiro[posV-1][posH+1] == '_' && tabuleiro[posV+1][posH-1] == '_') {
-        return false;
-    // Se todos ao redor são vazios (laterais)
-    } else if (posV == 0 || posV == 7 || posV == 0 || posV == 7) {
-        // if (posV == 0 &&)
+    if (y > 7 || x > 7 || y < 0 || x < 0 || jg->tabuleiro[x][y] != '_') {
         return false;
     } else {
-        return true;
-    }
-
-}
-
-void vitoria(bool gameOver, int ptsP, int ptsB) {
-    if (gameOver) {
-        if (ptsP > ptsB) {
-            printf("Preto venceu!\n");
-        } else if (ptsP < ptsB){
-            printf("Branco venceu!\n");
-        } else {
-            printf("Preto e branco empataram!\n");
+        int i;
+        bool valido = false, procurando;
+        
+        // Percorrendo linhas
+        i = x - 1, procurando = true;
+        while (i >= 0 && procurando) {
+            if (jg->tabuleiro[i][y] == '_') {
+                procurando = false;
+            } else if (abs(i - x) == 1 && jg->tabuleiro[i][y] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[i][y] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i--;
         }
+
+        i = x + 1, procurando = true;
+        while (!valido && procurando && i <= 7) {
+            if (jg->tabuleiro[i][y] == '_') {
+                procurando = false;
+            } else if (abs(i - x) == 1 && jg->tabuleiro[i][y] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[i][y] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i++;
+        }
+
+        // Percorrendo colunas
+        i = y - 1, procurando = true;
+        while (!valido && procurando && i >= 0) {
+            if (jg->tabuleiro[x][i] == '_') {
+                procurando = false;
+            } else if (abs(i - y) == 1 && jg->tabuleiro[x][i] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[x][i] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i--;
+        }
+
+        i = y + 1, procurando = true;
+        while (!valido && procurando && i <= 7) {
+            if (jg->tabuleiro[x][i] == '_') {
+                procurando = false;
+            } else if (abs(i - y) == 1 && jg->tabuleiro[x][i] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[x][i] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i++;
+        }
+
+        // Percorrendo diagonais
+        i = 1, procurando = true;
+        while (!valido && procurando && (y + i <= 7) && (x + i <= 7)) {
+            if (jg->tabuleiro[x+i][y+i] == '_') {
+                procurando = false;
+            } else if (i == 1 && jg->tabuleiro[x+i][y+i] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[x+i][y+i] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i++;
+        }
+
+        i = 1, procurando = true;
+        while (!valido && procurando && (y - i >= 0) && (x - i >= 0)) {
+            if (jg->tabuleiro[x-i][y-i] == '_') {
+                procurando = false;
+            } else if (i == 1 && jg->tabuleiro[x-i][y-i] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[x-i][y-i] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i++;
+        }
+
+        i = 1, procurando = true;
+        while (!valido && procurando && (y - i >= 0) && (x + i <= 7)) {
+            if (jg->tabuleiro[x+i][y-i] == '_') {
+                procurando = false;
+            } else if (i == 1 && jg->tabuleiro[x+i][y-i] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[x+i][y-i] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i++;
+        }
+
+        i = 1, procurando = true;
+        while (!valido && procurando && (y + i <= 7) && (x - i >= 0)) {
+            if (jg->tabuleiro[x-i][y+i] == '_') {
+                procurando = false;
+            } else if (i == 1 && jg->tabuleiro[x-i][y+i] == jogador) {
+                procurando = false;
+            } else if(jg->tabuleiro[x-i][y+i] == jogador) {
+                procurando = false;
+                valido = true;
+            }
+            i++;
+        }
+        return valido;
+    }
+}
+// 28 é o máximo de posições de jogadas validas possíveis.
+int jogadasValidas(jogo *jg, char jogador, jogada jogadas[28]) { 
+    int cont = 0;
+    int i, j;
+
+    for (i = jg->limiteCima; i <= jg->limiteBaixo; i++) {
+        for (j = jg->limiteEsq; j <= jg->limiteDir; j++) {
+            if (jogadaValida (jg, i, j, jogador)){
+                jogadas[cont].x = i;
+                jogadas[cont].y = j;
+                cont++;
+            }
+        }
+    }
+    return cont;
+} 
+
+void vitoria(int ptsP, int ptsB) {
+    if (ptsP > ptsB) {
+        printf("Jogador venceu!\n");
+    } else if (ptsP < ptsB){
+        printf("Computador venceu!\n");
+    } else {
+        printf("Empate!\n");
     }
 }
