@@ -51,25 +51,26 @@ int main() {
                     }
                 } while(verEntrada);
 
-                printf("[DEBUG] JOGADOR: (%d,%c)", x, y+'a');
+                // printf("[DEBUG] JOGADOR: (%d,%c)", x+1, y+'a');
                 atualizaTab(&jg, x, y, 'P');
             } else {
                 passouVez = true;
             }
             vezJogador = false;    
         } else {
-            nJogadasValidas = jogadasValidas(&jg, 'B', jogadas);
+            jogada jogadaComputador;
+            nJogadasValidas = jogaComputador(&jg, &jogadaComputador);
             if (nJogadasValidas > 0) {
                 passouVez = false;
 
-                printf("[DEBUG] COMPUTADOR: (%d,%c)", jogadas[0].x, jogadas[0].y+'a');
-                atualizaTab(&jg, jogadas[0].x, jogadas[0].y, 'B');
+                // printf("[DEBUG] COMPUTADOR: (%d,%c)", jogadas[0].x+1, jogadas[0].y+'a');
+                atualizaTab(&jg, jogadaComputador.x, jogadaComputador.y, 'B');
             }
             vezJogador = true;
         }
         if (passouVez && vezJogador) gameOver = true;
     }
 
-    vitoria(jg.ptsP, jg.ptsB);
+    vitoria(&jg);
     return 0;
 }

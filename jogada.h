@@ -8,16 +8,7 @@
 #ifndef _JOGADA_H_
 #define _JOGADA_H_
 
-typedef struct jogo {
-    char tabuleiro[8][8];
-    int ptsB;
-    int ptsP;
-    int limiteCima;
-    int limiteDir;
-    int limiteBaixo;
-    int limiteEsq;
-} jogo;
-
+#include "tabuleiro.h"
 
 typedef struct jogada {
     int x;
@@ -26,6 +17,7 @@ typedef struct jogada {
 
 bool jogadaValida (jogo *jg, int x, int y, char jogador);
 int jogadasValidas(jogo *jg, char jogador, jogada jogadas[28]);
-void vitoria(int ptsP, int ptsB);
+int jogaComputador(jogo *jg, jogada *melhorJogada);
+void vitoria(jogo *jg);
 
 #endif

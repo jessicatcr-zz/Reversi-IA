@@ -67,6 +67,7 @@ void inicializaTabPeso(int tabuleiroPeso[8][8]) {
 void imprimeTab(jogo *jg) {
     int i, j;
     printf("\n");
+    printf("Jogador %d vs %d Computador\n\n", jg->ptsP, jg->ptsB);
     printf("  a b c d e f g h\n");
     for (i = 0; i < 8; i++) {
         printf("%d ", i+1);
@@ -89,12 +90,26 @@ int max (int a, int b) {
     else return b;
 }
 
+void copiaTab (jogo *fonte, jogo *destino) {
+    int i, j;
+    
+    destino->ptsB = fonte->ptsB;
+    destino->ptsP = fonte->ptsP;
+    destino->limiteCima = fonte->limiteCima;
+    destino->limiteDir = fonte->limiteDir;
+    destino->limiteBaixo = fonte->limiteBaixo;
+    destino->limiteEsq = fonte->limiteEsq;
+
+    for (i = 0; i < 8; i++)
+        for (j = 0; j < 8; j++)
+            destino->tabuleiro[i][j] = fonte->tabuleiro[i][j];
+}
+
 void atualizaTab (jogo *jg, int x, int y, char jogador) {
     bool valido, procurando;
-    int i, j, ptsGanhos = 0;
+    int i, j;
 
     jg->tabuleiro[x][y] = jogador;
-    ptsGanhos++;
 
     jg->limiteCima = min(jg->limiteCima, (x-1 < 0 ? 0 : x-1));
     jg->limiteDir =  max(jg->limiteDir, (y+1 > 7 ? 7 : y+1));
@@ -117,7 +132,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i + 1; valido && j < x; j++)
-        jg->tabuleiro[j][y] = jogador, ptsGanhos++;
+        jg->tabuleiro[j][y] = jogador;
 
     i = x + 1, procurando = true, valido = false;
     while (!valido && procurando && i <= 7) {
@@ -133,7 +148,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i - 1; valido && j > x; j--)
-        jg->tabuleiro[j][y] = jogador, ptsGanhos++;
+        jg->tabuleiro[j][y] = jogador;
 
     // Percorrendo colunas
     i = y - 1, procurando = true, valido = false;
@@ -150,7 +165,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i + 1; valido && j < y; j++)
-        jg->tabuleiro[x][j] = jogador, ptsGanhos++;
+        jg->tabuleiro[x][j] = jogador;
 
     i = y + 1, procurando = true, valido = false;
     while (!valido && procurando && i <= 7) {
@@ -166,7 +181,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i - 1; valido && j > y; j--)
-        jg->tabuleiro[x][j] = jogador, ptsGanhos++;
+        jg->tabuleiro[x][j] = jogador;
 
     // Percorrendo diagonais
     i = 1, procurando = true, valido = false;
@@ -183,7 +198,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i - 1; valido && j > 0; j--)
-        jg->tabuleiro[x+j][y+j] = jogador, ptsGanhos++;
+        jg->tabuleiro[x+j][y+j] = jogador;
 
     i = 1, procurando = true, valido = false;
     while (!valido && procurando && (y - i >= 0) && (x - i >= 0)) {
@@ -199,7 +214,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i - 1; valido && j > 0; j--)
-        jg->tabuleiro[x-j][y-j] = jogador, ptsGanhos++;
+        jg->tabuleiro[x-j][y-j] = jogador;
 
     i = 1, procurando = true, valido = false;
     while (!valido && procurando && (y - i >= 0) && (x + i <= 7)) {
@@ -215,7 +230,7 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i - 1; valido && j > 0; j--)
-        jg->tabuleiro[x+j][y-j] = jogador, ptsGanhos++;
+        jg->tabuleiro[x+j][y-j] = jogador;
 
 
     i = 1, procurando = true, valido = false;
@@ -232,13 +247,14 @@ void atualizaTab (jogo *jg, int x, int y, char jogador) {
     }
 
     for(j = i - 1; valido && j > 0; j--)
-        jg->tabuleiro[x-j][y+j] = jogador, ptsGanhos++;
+        jg->tabuleiro[x-j][y+j] = jogador;
 
-    if(jogador == 'P') {
-        jg->ptsP += ptsGanhos;
-        jg->ptsB -= (ptsGanhos-1);
-    } else {
-        jg->ptsB += ptsGanhos;
-        jg->ptsP -= (ptsGanhos-1);
-    }
+    jg->ptsP = 0, jg->ptsB = 0;
+    for (i = 0; i < 8; i++)
+        for (j = 0; j < 8; j++)
+            if(jg->tabuleiro[i][j] == 'P')
+                jg->ptsP++;
+            else if (jg->tabuleiro[i][j] == 'B')
+                jg->ptsB++;
+            
 }

@@ -9,7 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <limits.h>
 #include "jogada.h"
+
+#define INFINITOPOS INT_MAX
+#define INFINITONEG INT_MIN
 
 bool jogadaValida (jogo *jg, int x, int y, char jogador) {
     // Não ultrapassar os limites
@@ -143,14 +147,109 @@ int jogadasValidas(jogo *jg, char jogador, jogada jogadas[28]) {
         }
     }
     return cont;
-} 
+}
 
-void vitoria(int ptsP, int ptsB) {
-    if (ptsP > ptsB) {
+int minimax (jogo *noJogo, int profundidade, bool maximizar, int alfa, int beta) {
+    int nJogadasValidas, melhorValor, valor, i;
+    char jogador;
+    jogo jogobkp;
+    jogada jogadas[28];
+
+    if(maximizar) jogador = 'B';
+    else jogador = 'P';
+    
+    nJogadasValidas = jogadasValidas(noJogo, jogador, jogadas);
+    
+    if (nJogadasValidas == 0 || profundidade == 0) {
+        return noJogo->ptsB;
+    }
+
+    if (maximizar) {
+        melhorValor = INFINITONEG;
+
+        for(i = 0; i < nJogadasValidas; i++) {
+            copiaTab(noJogo, &jogobkp);
+            atualizaTab(noJogo, jogadas[i].x, jogadas[i].y, 'B');
+            valor = minimax(noJogo, profundidade-1, false, alfa, beta);
+            melhorValor = max(melhorValor, valor);
+            alfa = max(alfa, melhorValor);
+            copiaTab(&jogobkp, noJogo);
+
+            if (beta <= alfa)
+                break;
+        }
+
+        return melhorValor;
+    } else {
+        melhorValor = INFINITOPOS;
+
+        for(i = 0; i < nJogadasValidas; i++) {
+            copiaTab(noJogo, &jogobkp);
+            atualizaTab(noJogo, jogadas[i].x, jogadas[i].y, 'P');
+            valor = minimax(noJogo, profundidade-1, true, alfa, beta);
+            melhorValor = min(melhorValor, valor);
+            beta = min(beta, melhorValor);
+            copiaTab(&jogobkp, noJogo);
+
+            if (beta <= alfa)
+                break;
+        }
+
+        return melhorValor;
+    }
+}
+
+int jogaComputador(jogo *jg, jogada *melhorJogada) {
+    int nJogadasValidas;
+    jogada jogadas[28];
+
+    nJogadasValidas = jogadasValidas(jg, 'B', jogadas);
+    if(nJogadasValidas == 0) {
+        return 0;
+    } else {
+        jogo jogobkp, *noJogo;
+        int melhorValor, profundidade, valor, melhorIndice = 0, alfa, beta, i; 
+
+        noJogo = jg;
+        profundidade = 3;
+        alfa = INFINITONEG;
+        beta = INFINITOPOS;
+
+
+        melhorValor = INFINITONEG;
+
+        for(i = 0; i < nJogadasValidas; i++) {
+            copiaTab(noJogo, &jogobkp);
+            atualizaTab(noJogo, jogadas[i].x, jogadas[i].y, 'B');
+            valor = minimax(noJogo, profundidade-1, false, alfa, beta);
+            
+            if (valor > melhorValor) {
+                melhorIndice = i;
+                melhorValor = valor;
+            }
+
+            alfa = max(alfa, melhorValor);
+            copiaTab(&jogobkp, noJogo);
+
+            if (beta <= alfa)
+                break;
+        }
+
+        melhorJogada->x = jogadas[melhorIndice].x;
+        melhorJogada->y = jogadas[melhorIndice].y;
+
+        return 1;
+    }
+}
+
+void vitoria(jogo *jg) {
+    printf("Jogador [P] %d vs %d [B] Computador\n\n", jg->ptsP, jg->ptsB);
+
+    if (jg->ptsP > jg->ptsB) {
         printf("Jogador venceu!\n");
-    } else if (ptsP < ptsB){
+    } else if (jg->ptsP < jg->ptsB){
         printf("Computador venceu!\n");
     } else {
         printf("Empate!\n");
-    }
+    }  
 }
