@@ -50,8 +50,6 @@ int main() {
                         if (verEntrada) printf("Jogada Inválida!\n");
                     }
                 } while(verEntrada);
-
-                // printf("[DEBUG] JOGADOR: (%d,%c)", x+1, y+'a');
                 atualizaTab(&jg, x, y, 'P');
             } else {
                 passouVez = true;
@@ -62,8 +60,6 @@ int main() {
             nJogadasValidas = jogaComputador(&jg, &jogadaComputador);
             if (nJogadasValidas > 0) {
                 passouVez = false;
-
-                // printf("[DEBUG] COMPUTADOR: (%d,%c)", jogadas[0].x+1, jogadas[0].y+'a');
                 atualizaTab(&jg, jogadaComputador.x, jogadaComputador.y, 'B');
             }
             vezJogador = true;
